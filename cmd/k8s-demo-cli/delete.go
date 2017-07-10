@@ -71,6 +71,9 @@ func newDeleteCmd(out io.Writer, client *kubernetes.Clientset) *cobra.Command {
 		Aliases: []string{"rm"},
 		Short:   "Delete a pod running in a Kubernetes cluster",
 		Long:    deleteDesc,
+		PersistentPreRun: func(cmd *cobra.Command, _ []string) {
+			ensureEnvFlag("namespace", cmd)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return delete.run(args)
 		},

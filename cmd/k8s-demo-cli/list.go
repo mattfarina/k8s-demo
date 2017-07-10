@@ -68,6 +68,10 @@ func newListCmd(out io.Writer, client *kubernetes.Clientset) *cobra.Command {
 		Aliases: []string{"ls"},
 		Short:   "List the pods running in a Kubernetes cluster",
 		Long:    listDesc,
+		PersistentPreRun: func(cmd *cobra.Command, _ []string) {
+			ensureEnvFlag("namespace", cmd)
+			ensureEnvFlag("labels", cmd)
+		},
 		RunE: func(cmd *cobra.Command, args []string) error {
 			return list.run()
 		},

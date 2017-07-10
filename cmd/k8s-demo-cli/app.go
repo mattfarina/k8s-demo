@@ -18,6 +18,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
@@ -40,6 +41,9 @@ func newRootCmd() *cobra.Command {
 		Use:   "k8s-demo-cli",
 		Short: "A kubernetes demo CLI",
 		Long:  rootDesc,
+		PersistentPreRun: func(cmd *cobra.Command, _ []string) {
+			ensureEnvFlag("config", cmd)
+		},
 	}
 
 	f := cmd.PersistentFlags()
@@ -103,4 +107,21 @@ func kubernetesClient() (*kubernetes.Clientset, error) {
 	}
 
 	return clientset, nil
+}
+
+// When a flag has not been passed in via the CLI this will check if there is an
+// environment variable in the form K8S_DEMO_[name] with a value to use. This is
+// useful for cloud naitive and 12 factor apps.
+// This method is used instead of spf13/viper because it can be used with cgo
+// disabled which is useful if run inside a container (e.g., use of a scratch one)
+func ensureEnvFlag(name string, cmd *cobra.Command) {
+	if cmd.Flags().Changed(name) {
+		return
+	}
+
+	env := "K8S_DEMO_" + strings.ToUpper(name)
+
+	if v, found := os.LookupEnv(env); found {
+		cmd.Flags().Set(name, v)
+	}
 }
