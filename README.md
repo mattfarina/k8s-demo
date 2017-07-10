@@ -5,6 +5,8 @@ This is a simple CLI demo application that does two things:
 1. Provides the ability to list the pods in a Kubernetes cluster. Includes limited filtering capabilities.
 2. One or more pods can be deleted.
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/mattfarina/k8s-demo)](https://goreportcard.com/report/github.com/mattfarina/k8s-demo)
+
 ## Assumptions
 
 1. All pods available to a user, without filtering of any kind, should be included by default. That includes the system pods.
